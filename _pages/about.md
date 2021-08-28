@@ -6,10 +6,7 @@ permalink: /about/
 
 ## Work:
 
-Currently I'm a data analyst at SiriusXM. Im on the CRM team and use statistics and machine 
-learning to build, train, and deploy models to target customers. I also work on campaigns, 
-experimentaiton, data visualization, dashboarding/reporting and automating data workflows.
-
+Currently I'm a data analyst at SiriusXM. Im on the CRM team and I work on campaigns, experimentaiton, data visualization, dashboarding/reporting and automating data workflows. I also use statistics and machine learning to build, train, and deploy models to target customers.
 
 ## Academic Background:
 
