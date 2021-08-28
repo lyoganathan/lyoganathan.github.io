@@ -29,6 +29,19 @@ url: "https://lyoganathan.github.io/" # the base hostname & protocol for your si
 github_username:  lyoganathan
 linkedin_username: laagi-yoganathan-921313149
 
+author:
+  name: Laagi Yoganathan
+  avatar: 
+  bio: "Data Analyst"
+  location: "Toronto, Canada"
+  links:
+    - label: "Github"
+      icon: "fab fa-fw fa-github-square"
+      url: "http://github.com/lyoganathan/"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/laagi-yoganathan-921313149/"
+
 kramdown:
   math_engine: mathjax
   syntax_highlighter: rouge
@@ -42,6 +55,15 @@ plugins:
 minimal_mistakes_skin: "dirt"
 
 include: ["_pages"]
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
 
 # Exclude from processing.
 # The following items will not be processed, by default.
