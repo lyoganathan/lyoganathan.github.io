@@ -2,19 +2,15 @@
 layout: post
 title: "Regression & Hypothesis Testing: Continous Y, Categorical X"
 date: "2021-08-27"
-output:
-  md_document:
-    variant: markdown_github
-    preserve_yaml: true
-
 tags: [regression, categorical, hypothesis, testing, multiple, categories]
 values:
   show_date: true
+
 ---
 
-```{r}
-knitr::opts_knit$set(base.dir = "C:/Users/Laagi.yoganathan/Documents/GitLab/lyoganathan.github.io", base.url = "/")
-knitr::opts_chunk$set(fig.path = "assets/images/")
+```{r include=FALSE}
+#knitr::opts_knit$set(base.dir = "C:/Users/Laagi.yoganathan/Documents/GitLab/lyoganathan.github.io", base.url = "/")
+#knitr::opts_chunk$set(fig.path = "assets/images/")
 ```
 
 ## Palmer penguins dataset
@@ -131,8 +127,11 @@ The least squares formula works by minimizing the sum of squared deviations. In 
 
 Let's take a simple example with 3 data points in one dimension. Let's say each data point is \(y\). What value of  \(\hat{y}\) would minimize the sum of squared errors (the formula above)?.
 
+```{r include=FALSE}
+#![Residuals in one dimension](/assets/images/sse_1d.svg)
+```
 
-![Residuals in one dimension](/assets/images/sse_1d.svg)
+
 
 
 The mean is 0.6. Imagine a line from each point to the mean. The length of the line would be the difference between each point and the mean. The sum of the squares of those lines would be the squared errors. Try with any other point (for example the median 0.8). The mean is the one that minimizes sum of squared errors.
