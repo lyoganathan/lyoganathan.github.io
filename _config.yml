@@ -46,13 +46,16 @@ kramdown:
 
 # Build settings
 remote_theme: "mmistakes/minimal-mistakes@4.24.0"
+minimal_mistakes_skin: "dirt"
+
 plugins:
   - jekyll-feed
   - jekyll-include-cache
 
-minimal_mistakes_skin: "dirt"
+
 
 include: ["_pages"]
+exclude: ['*.Rmd']
 
 defaults:
   # _posts
@@ -61,7 +64,6 @@ defaults:
       type: posts
     values:
       layout: single
-      author_profile: true
 
 # Exclude from processing.
 # The following items will not be processed, by default.

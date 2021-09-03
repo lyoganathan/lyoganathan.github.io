@@ -9,16 +9,7 @@ values:
 toc: yes
 ---
 
-```{r include=FALSE}
-knitr::opts_knit$set(base.dir = "C:/Users/Laagi/Documents/GitHub/lyoganathan.github.io", base.url = "/")
-knitr::opts_chunk$set(
-  fig.path = "assets/images/regression_hypothesis_testing/",
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  dev.args=list(bg = "transparent")
-)
-```
+
 
 ## Palmer penguins dataset
 
@@ -26,17 +17,34 @@ I've been watching a lot of Atypical recently and also found out there's a datas
 
 This will show how to do regression with categorical variables, and look at similarities with hypothesis testing using t-tests. I'll go into what's happening in the background and why we can get the same result from a t-test and regression.
 
-```{r}
+
+{% highlight r %}
 library(palmerpenguins)
 library(ggplot2)
 library(scatterplot3d)
 library(knitr)
 
 kable(head(penguins,10))
-```
+{% endhighlight %}
+
+
+
+|species |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
+|:-------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
+|Adelie  |Torgersen |           39.1|          18.7|               181|        3750|male   | 2007|
+|Adelie  |Torgersen |           39.5|          17.4|               186|        3800|female | 2007|
+|Adelie  |Torgersen |           40.3|          18.0|               195|        3250|female | 2007|
+|Adelie  |Torgersen |             NA|            NA|                NA|          NA|NA     | 2007|
+|Adelie  |Torgersen |           36.7|          19.3|               193|        3450|female | 2007|
+|Adelie  |Torgersen |           39.3|          20.6|               190|        3650|male   | 2007|
+|Adelie  |Torgersen |           38.9|          17.8|               181|        3625|female | 2007|
+|Adelie  |Torgersen |           39.2|          19.6|               195|        4675|male   | 2007|
+|Adelie  |Torgersen |           34.1|          18.1|               193|        3475|NA     | 2007|
+|Adelie  |Torgersen |           42.0|          20.2|               190|        4250|NA     | 2007|
 
 ### Histogram / Density plot:
-```{r}
+
+{% highlight r %}
 # Remove NAs
 penguins_df = na.omit(penguins)
 
@@ -44,24 +52,50 @@ penguins_df = na.omit(penguins)
 #ggplot(penguins_df, aes(x=body_mass_g, fill=species, color=species)) + geom_histogram(alpha=0.4, position='identity')
 
 # Density plot:
-ggplot(penguins_df, aes(x=body_mass_g, fill=species)) + geom_density(alpha=0.8) + theme_minimal()
-```
+ggplot(penguins_df, aes(x=body_mass_g, fill=species)) + geom_density(alpha=0.8)
+{% endhighlight %}
+
+![plot of chunk unnamed-chunk-3](/assets/images/regression_hypothesis_testing/unnamed-chunk-3-1.png)
 
 ### Summary Statistics
-```{r}
+
+{% highlight r %}
 # Mean body mass for each species
 aggregate(body_mass_g ~ species, penguins_df, mean)
+{% endhighlight %}
 
+
+
+{% highlight text %}
+##     species body_mass_g
+## 1    Adelie        3706
+## 2 Chinstrap        3733
+## 3    Gentoo        5092
+{% endhighlight %}
+
+
+
+{% highlight r %}
 # Number of data points for each species
 aggregate(body_mass_g ~ species, penguins_df, length)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+##     species body_mass_g
+## 1    Adelie         146
+## 2 Chinstrap          68
+## 3    Gentoo         119
+{% endhighlight %}
 
 
 ### Adelie vs Chinstrap
 
 Let's test the difference between body mass of Adelie and Chinstrap using regression and compare the result to a t-test.
 
-```{r}
+
+{% highlight r %}
 # Here we keep rows that contain Adelie or Chinstrap and only keep species and body_mass_g column
 test_df = penguins_df[penguins_df$species %in% c('Adelie','Chinstrap'), c("species","body_mass_g")]
 
@@ -70,43 +104,117 @@ test_df$species = factor(test_df$species)
 
 # Difference between means:
 diff(by(test_df$body_mass_g, test_df$species, mean))
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## [1] 26.92
+{% endhighlight %}
 
 ## Regression with categorical variables
 
 Our x variable (species) is a category/factor. In python, you might have to use one hot encoding on your categorical variables before you pass your data into a linear model. The nice thing about R is that it does the one hot encoding/dummy coding on factors automagically for us.
 
-```{r}
+
+{% highlight r %}
 two_lvl_model = lm(body_mass_g ~ species, data = test_df)
 summary(two_lvl_model)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## 
+## Call:
+## lm(formula = body_mass_g ~ species, data = test_df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1033.1  -306.2   -20.6   268.4  1068.8 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        3706.2       36.1  102.59   <2e-16 ***
+## speciesChinstrap     26.9       64.1    0.42     0.67    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 437 on 212 degrees of freedom
+## Multiple R-squared:  0.000832,	Adjusted R-squared:  -0.00388 
+## F-statistic: 0.176 on 1 and 212 DF,  p-value: 0.675
+{% endhighlight %}
 
 ### Dummy Coding / One-Hot Encoding
 
 Let's manually do the dummy coding and compare results. If you think about a linear model \(y=mx+b\) where \(x\) is species and \(x\) is body mass, we need $x$ to be 0 for one category and 1 for the other. In this case let's make Chinstrap 1 and Adelie 0.
 
-```{r}
+
+{% highlight r %}
 # Manually create dummy variables:
 test_df$x = ifelse(test_df$species == 'Chinstrap',1,0)
-```
+{% endhighlight %}
 
 Now we do regression with our new variable \(x\).
-```{r}
+
+{% highlight r %}
 two_lvl_dummy = lm(body_mass_g ~ x, data = test_df)
 summary(two_lvl_dummy)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## 
+## Call:
+## lm(formula = body_mass_g ~ x, data = test_df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1033.1  -306.2   -20.6   268.4  1068.8 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   3706.2       36.1  102.59   <2e-16 ***
+## x               26.9       64.1    0.42     0.67    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 437 on 212 degrees of freedom
+## Multiple R-squared:  0.000832,	Adjusted R-squared:  -0.00388 
+## F-statistic: 0.176 on 1 and 212 DF,  p-value: 0.675
+{% endhighlight %}
 
 We see that we got the exact same result as before.
 
 ### Intrepreting Regression Coefficients
 
-```{r}
+
+{% highlight r %}
 # Intercept:
 two_lvl_model$coefficients[1]
+{% endhighlight %}
 
+
+
+{% highlight text %}
+## (Intercept) 
+##        3706
+{% endhighlight %}
+
+
+
+{% highlight r %}
 # Slope
 two_lvl_model$coefficients[2]
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## speciesChinstrap 
+##            26.92
+{% endhighlight %}
 
 Do these numbers look familar? The slope is 26.92 which is actually the group difference. The 
 intercept is 3700.62 which is mean of Adelie group. Why is this the case?
@@ -125,10 +233,13 @@ I guess I didn't answer the real questions: Why is the slope the mean difference
 
 Let's plot the situation:
 
-```{r}
+
+{% highlight r %}
 plot.default(x=test_df$species, y=test_df$body_mass_g)
 lines(test_df$species, predict(two_lvl_model),col='blue')
-```
+{% endhighlight %}
+
+![plot of chunk unnamed-chunk-10](/assets/images/regression_hypothesis_testing/unnamed-chunk-10-1.png)
 
 The way the slope and intercept are calculated is called Oridnary Least Squares. It minimizes the sum of squared deviations. For every x variable our model predicts a value \(\hat{y_i}\). Our x variable is categorical with 2 levels: Adelie(0) or Chinstrap(1). 
 
@@ -138,9 +249,7 @@ The least squares formula works by minimizing the sum of squared deviations. In 
 
 Let's take a simple example with 3 data points in one dimension. Let's say each data point is \(y\). What value of  \(\hat{y}\) would minimize the sum of squared errors (the formula above)?.
 
-```{r include=FALSE}
-#![Residuals in one dimension](/assets/images/sse_1d.svg)
-```
+
 
 The mean is 0.6. Imagine a line from each point to the mean. The length of the line would be the difference between each point and the mean. The sum of the squares of those lines would be the squared errors. Try with any other point (for example the median 0.8). The mean is the one that minimizes sum of squared errors.
 
@@ -159,10 +268,27 @@ We can also compare this result to what we would get from a t-test:
 
 ## Regression vs t-test
 
-```{r}
+
+{% highlight r %}
 # If you set var.equal = T it will give the same t-value & p-value as the regression
 t.test(test_df$body_mass_g ~ test_df$species, var.equal = T)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## 
+## 	Two Sample t-test
+## 
+## data:  test_df$body_mass_g by test_df$species
+## t = -0.42, df = 212, p-value = 0.7
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -153.25   99.41
+## sample estimates:
+##    mean in group Adelie mean in group Chinstrap 
+##                    3706                    3733
+{% endhighlight %}
 
 ### Why is the p-value for t-test and regression exactly the same?
 
@@ -179,7 +305,8 @@ Which can also be written as (see [here](https://stackoverflow.com/a/21385702)):
 \[s_p^2 = \frac{(n_1 - 1)s_1^2 + n_2 - 1 (s_2^2)}{n_1 + n_2 - 2}\]
 
 Let's calculate the t-value manually:
-```{r}
+
+{% highlight r %}
 # Variacne estimator of coefficients from linear model that meets assumptions:
 # In this case Xs are just 0 or 1, Y is the body mass for respective species
 
@@ -194,7 +321,7 @@ var_pool = ( (n1-1)*var1 + (n2-1) * var2) / (n1+n2-2)
 
 # Pooled standard error:
 se_pool = sqrt( var_pool * (1/n1 + 1/n2) )
-```
+{% endhighlight %}
 
 ### Regression t-value
 
@@ -211,15 +338,17 @@ You can kind of think of SE of slope in a similar manner to to SE of any data. T
 
 Similarly for slope, imagine if you repeatedly sampled your data and calculated the slope of the best fit line. If the residuals are small, we might except slope to have a narrower range of values. If the residuals are large we are less sure of the true value of the slope, and thus might have a larger range of values.
 
-```{r}
+
+{% highlight r %}
 # SE of the slope is the same as SE pooled
 sqrt(sum((two_lvl_model$residuals - mean(two_lvl_model$residuals))^2) / (length( two_lvl_model$residuals) - 2)) / sqrt(sum( (test_df$x - mean(test_df$x) )^2 ))
+{% endhighlight %}
 
 
 
-
-
-```
+{% highlight text %}
+## [1] 64.09
+{% endhighlight %}
 
 The regression t-value is calculated using estimates of the mean difference and standard error obtained mathematically.
 
@@ -227,30 +356,85 @@ We see how the standard error of both are the same. We also know the numerator i
 
 ## Regression with a factor with 3 levels
 
-```{r}
+
+{% highlight r %}
 three_lvl_model = lm(body_mass_g ~ species, data = penguins_df)
 summary(three_lvl_model)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## 
+## Call:
+## lm(formula = body_mass_g ~ species, data = penguins_df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1142.4  -342.4   -33.1   307.6  1207.6 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        3706.2       38.1    97.2   <2e-16 ***
+## speciesChinstrap     26.9       67.7     0.4     0.69    
+## speciesGentoo      1386.3       56.9    24.4   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 461 on 330 degrees of freedom
+## Multiple R-squared:  0.674,	Adjusted R-squared:  0.673 
+## F-statistic:  342 on 2 and 330 DF,  p-value: <2e-16
+{% endhighlight %}
 
 ## The equivalant is one way anova and tukey HSD t-tests
 
-```{r}
+
+{% highlight r %}
 three_lvl_aov = aov(body_mass_g ~ species, data = penguins_df)
 summary(three_lvl_aov)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+##              Df   Sum Sq  Mean Sq F value Pr(>F)    
+## species       2 1.45e+08 72595110     342 <2e-16 ***
+## Residuals   330 7.01e+07   212332                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+{% endhighlight %}
 TukeyHSD gives us an additional piece of information: the Gentoo-Chinstrap relationship which is not present in our regression above.
 
-```{r}
+
+{% highlight r %}
 TukeyHSD(three_lvl_aov)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = body_mass_g ~ species, data = penguins_df)
+## 
+## $species
+##                     diff    lwr    upr  p adj
+## Chinstrap-Adelie   26.92 -132.4  186.2 0.9164
+## Gentoo-Adelie    1386.27 1252.3 1520.3 0.0000
+## Gentoo-Chinstrap 1359.35 1194.4 1524.3 0.0000
+{% endhighlight %}
 
 Now let's visualize this:
 
 # Plot data
-```{r}
+
+{% highlight r %}
 plot.default(x=penguins_df$species,y=penguins_df$body_mass_g)
 lines(penguins_df$species, predict(three_lvl_model),col='blue')
-```
+{% endhighlight %}
+
+![plot of chunk unnamed-chunk-18](/assets/images/regression_hypothesis_testing/unnamed-chunk-18-1.png)
 
 Well this is pretty wild, are we still looking at linear regression? The lines are disjoint and broken. What could be going on here? However, note that it does manage to pass through the means of all three groups (based on regression coefficients) which means it does minimize the least squares.
 
@@ -262,28 +446,77 @@ Where different combinations of \(x_1\) & \(x_2\) will be different categories. 
 
 We can manually create this coding and verify we get the exact same result:
 
-```{r}
+
+{% highlight r %}
 # Manually create dummy variables:
 penguins_df$x1 = ifelse(penguins_df$species == 'Chinstrap',1,0)
 penguins_df$x2 = ifelse(penguins_df$species == 'Gentoo',1,0)
 
 penguins_df
-```
+{% endhighlight %}
 
-```{r}
+
+
+{% highlight text %}
+## # A tibble: 333 x 10
+##    species island bill_length_mm bill_depth_mm flipper_length_~ body_mass_g
+##    <fct>   <fct>           <dbl>         <dbl>            <int>       <int>
+##  1 Adelie  Torge~           39.1          18.7              181        3750
+##  2 Adelie  Torge~           39.5          17.4              186        3800
+##  3 Adelie  Torge~           40.3          18                195        3250
+##  4 Adelie  Torge~           36.7          19.3              193        3450
+##  5 Adelie  Torge~           39.3          20.6              190        3650
+##  6 Adelie  Torge~           38.9          17.8              181        3625
+##  7 Adelie  Torge~           39.2          19.6              195        4675
+##  8 Adelie  Torge~           41.1          17.6              182        3200
+##  9 Adelie  Torge~           38.6          21.2              191        3800
+## 10 Adelie  Torge~           34.6          21.1              198        4400
+## # ... with 323 more rows, and 4 more variables: sex <fct>, year <int>,
+## #   x1 <dbl>, x2 <dbl>
+{% endhighlight %}
+
+
+{% highlight r %}
 # Double check that this is the same as the model we did before with UDF_text_07
 three_lvl_dummy = lm(body_mass_g ~ x1+x2, data = penguins_df)
 summary(three_lvl_dummy)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## 
+## Call:
+## lm(formula = body_mass_g ~ x1 + x2, data = penguins_df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1142.4  -342.4   -33.1   307.6  1207.6 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   3706.2       38.1    97.2   <2e-16 ***
+## x1              26.9       67.7     0.4     0.69    
+## x2            1386.3       56.9    24.4   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 461 on 330 degrees of freedom
+## Multiple R-squared:  0.674,	Adjusted R-squared:  0.673 
+## F-statistic:  342 on 2 and 330 DF,  p-value: <2e-16
+{% endhighlight %}
 
 
 We get the exact same result as above.
 
 We can visualize the 3D regression to get an idea of where the broken lines come from:
-```{r}
+
+{% highlight r %}
 s3d = scatterplot3d(z=penguins_df$body_mass_g, x=penguins_df$x1, y=penguins_df$x2)
 s3d$plane3d(three_lvl_dummy,draw_polygon = TRUE)
-```
+{% endhighlight %}
+
+![plot of chunk unnamed-chunk-21](/assets/images/regression_hypothesis_testing/unnamed-chunk-21-1.png)
 
 If you try to mentally squish this into a 2D graph like we saw before, you can kind of see how we got the broken graph earlier.
 
