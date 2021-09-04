@@ -218,7 +218,7 @@ Let's plot the situation:
 
 {% highlight r %}
 plot.default(x=test_df$x, y=test_df$body_mass_g,xlab = "Species (Dummy Coded)", ylab = "Body Mass (g)")
-lines(test_df$species, predict(two_lvl_model),col='blue')
+lines(test_df$x, predict(two_lvl_model),col='blue')
 {% endhighlight %}
 
 ![plot of chunk boxplot-regression-line](/assets/images/regression_hypothesis_testing/boxplot-regression-line-1.png)

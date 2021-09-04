@@ -128,7 +128,7 @@ Let's plot the situation:
 
 ```{r boxplot-regression-line}
 plot.default(x=test_df$x, y=test_df$body_mass_g,xlab = "Species (Dummy Coded)", ylab = "Body Mass (g)")
-lines(test_df$species, predict(two_lvl_model),col='blue')
+lines(test_df$x, predict(two_lvl_model),col='blue')
 ```
 
 The way the slope and intercept are calculated is called Oridnary Least Squares. It finds values of the slope and intercept that minimizes the sum of squared deviations. For every $x$ variable our model predicts a value $\hat{y_i}$. Our $x$ variable is categorical with 2 levels: $Adelie(0)$ or $Chinstrap(1)$.
