@@ -2,7 +2,7 @@
 layout: single
 title: "Hypothesis Testing With Regression"
 excerpt: "Comparing regression and t-test when you have a continous Y and a categorical X"
-date: "2021-09-07"
+date: "2021-09-01"
 tags: [regression, categorical, hypothesis, testing, multiple, categories]
 values:
   show_date: true
@@ -254,7 +254,7 @@ The least squares formula works by minimizing the sum of squared deviations. In 
 
 Let's take a simple example with 3 data points in one dimension. Let's say each data point is $y$. What value of $\hat{y}$ would minimize the sum of squared errors (the formula above)?.
 
-[Residuals in one dimension](/assets/images/regression_hypothesis_testing/sse_1d.svg)
+![Residuals in one dimension](/assets/images/regression_hypothesis_testing/sse_1d.png)
 
 The mean is $0.6$. Imagine a line from each point to the mean. The length of the line would be the difference between each point and the mean. The sum of the squares of those lines would be the squared errors. Try with any other point (for example the median 0.8). The mean is the one that minimizes sum of squared errors.
 
