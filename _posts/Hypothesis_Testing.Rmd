@@ -263,6 +263,7 @@ summary(three_lvl_model)
 TukeyHSD gives us an additional piece of information: the Gentoo-Chinstrap relationship which is not present in our regression above.
 
 ```{r}
+three_lvl_aov = aov(body_mass_g ~ species, data = penguins_df)
 TukeyHSD(three_lvl_aov)
 ```
 

@@ -36,16 +36,16 @@ kable(penguins[sample(nrow(penguins),10),])
 
 |species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
 |:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
-|Chinstrap |Dream     |           51.3|          18.2|               197|        3750|male   | 2007|
-|Gentoo    |Biscoe    |           50.0|          16.3|               230|        5700|male   | 2007|
-|Adelie    |Biscoe    |           39.0|          17.5|               186|        3550|female | 2008|
-|Gentoo    |Biscoe    |           46.4|          15.6|               221|        5000|male   | 2008|
-|Gentoo    |Biscoe    |           47.2|          13.7|               214|        4925|female | 2009|
-|Adelie    |Dream     |           40.8|          18.4|               195|        3900|male   | 2007|
-|Gentoo    |Biscoe    |           43.5|          15.2|               213|        4650|female | 2009|
-|Adelie    |Dream     |           39.2|          18.6|               190|        4250|male   | 2009|
-|Adelie    |Torgersen |           34.4|          18.4|               184|        3325|female | 2007|
-|Gentoo    |Biscoe    |           44.0|          13.6|               208|        4350|female | 2008|
+|Chinstrap |Dream     |           49.8|          17.3|               198|        3675|female | 2009|
+|Gentoo    |Biscoe    |           43.2|          14.5|               208|        4450|female | 2008|
+|Adelie    |Dream     |           37.5|          18.9|               179|        2975|NA     | 2007|
+|Adelie    |Torgersen |           41.5|          18.3|               195|        4300|male   | 2009|
+|Chinstrap |Dream     |           50.1|          17.9|               190|        3400|female | 2009|
+|Adelie    |Dream     |           36.0|          18.5|               186|        3100|female | 2007|
+|Chinstrap |Dream     |           51.0|          18.8|               203|        4100|male   | 2008|
+|Adelie    |Torgersen |           42.8|          18.5|               195|        4250|male   | 2008|
+|Gentoo    |Biscoe    |           46.7|          15.3|               219|        5200|male   | 2007|
+|Gentoo    |Biscoe    |           42.6|          13.7|               213|        4950|female | 2008|
 
 ### Visualize body mass of species
 
@@ -401,13 +401,23 @@ TukeyHSD gives us an additional piece of information: the Gentoo-Chinstrap relat
 
 
 {% highlight r %}
+three_lvl_aov = aov(body_mass_g ~ species, data = penguins_df)
 TukeyHSD(three_lvl_aov)
 {% endhighlight %}
 
 
 
 {% highlight text %}
-## Error in TukeyHSD(three_lvl_aov): object 'three_lvl_aov' not found
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = body_mass_g ~ species, data = penguins_df)
+## 
+## $species
+##                     diff    lwr    upr  p adj
+## Chinstrap-Adelie   26.92 -132.4  186.2 0.9164
+## Gentoo-Adelie    1386.27 1252.3 1520.3 0.0000
+## Gentoo-Chinstrap 1359.35 1194.4 1524.3 0.0000
 {% endhighlight %}
 
 Now let's visualize this.
@@ -442,18 +452,18 @@ kable(penguins_df[sample(nrow(penguins),10),])
 
 
 
-|species   |island | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year| x1| x2|
-|:---------|:------|--------------:|-------------:|-----------------:|-----------:|:------|----:|--:|--:|
-|Adelie    |Dream  |           36.9|          18.6|               189|        3500|female | 2008|  0|  0|
-|Chinstrap |Dream  |           50.2|          18.7|               198|        3775|female | 2009|  1|  0|
-|Gentoo    |Biscoe |           45.2|          14.8|               212|        5200|female | 2009|  0|  1|
-|Gentoo    |Biscoe |           51.1|          16.5|               225|        5250|male   | 2009|  0|  1|
-|Adelie    |Biscoe |           42.0|          19.5|               200|        4050|male   | 2008|  0|  0|
-|Chinstrap |Dream  |           46.9|          16.6|               192|        2700|female | 2008|  1|  0|
-|Chinstrap |Dream  |           49.2|          18.2|               195|        4400|male   | 2007|  1|  0|
-|Adelie    |Dream  |           40.2|          17.1|               193|        3400|female | 2009|  0|  0|
-|Chinstrap |Dream  |           51.5|          18.7|               187|        3250|male   | 2009|  1|  0|
-|Adelie    |Biscoe |           37.6|          19.1|               194|        3750|male   | 2008|  0|  0|
+|species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year| x1| x2|
+|:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|--:|--:|
+|Adelie    |Torgersen |           41.1|          17.6|               182|        3200|female | 2007|  0|  0|
+|Chinstrap |Dream     |           46.5|          17.9|               192|        3500|female | 2007|  1|  0|
+|Gentoo    |Biscoe    |           48.7|          15.7|               208|        5350|male   | 2008|  0|  1|
+|Adelie    |Biscoe    |           34.5|          18.1|               187|        2900|female | 2008|  0|  0|
+|Gentoo    |Biscoe    |           45.8|          14.6|               210|        4200|female | 2007|  0|  1|
+|Chinstrap |Dream     |           48.5|          17.5|               191|        3400|male   | 2007|  1|  0|
+|Adelie    |Dream     |           36.5|          18.0|               182|        3150|female | 2007|  0|  0|
+|Adelie    |Torgersen |           41.4|          18.5|               202|        3875|male   | 2009|  0|  0|
+|Adelie    |Biscoe    |           37.9|          18.6|               193|        2925|female | 2009|  0|  0|
+|Adelie    |Torgersen |           34.6|          17.2|               189|        3200|female | 2008|  0|  0|
 
 
 {% highlight r %}
