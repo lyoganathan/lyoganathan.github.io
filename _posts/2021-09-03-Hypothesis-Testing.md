@@ -20,7 +20,7 @@ This posts goes through how linear regression can be used for hypothesis testing
 
 ## Palmer penguins dataset
 
-I recently found out about a dataset on penguins in Antarctica called _palmerpenguins_. If you've watched the show Atypical, some of these penguin names might be familiar. For this post I'll focus on testing differences in body mass between the different species.
+I recently found out about a dataset on penguins in Antarctica called _palmerpenguins_. If you've seen Netflix's Atypical, some of these penguin names might be familiar.
 
 
 {% highlight r %}
@@ -29,23 +29,23 @@ library(ggplot2)
 library(scatterplot3d)
 library(knitr)
 
-kable(head(penguins,10))
+kable(penguins[sample(nrow(penguins),10),])
 {% endhighlight %}
 
 
 
-|species |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
-|:-------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
-|Adelie  |Torgersen |           39.1|          18.7|               181|        3750|male   | 2007|
-|Adelie  |Torgersen |           39.5|          17.4|               186|        3800|female | 2007|
-|Adelie  |Torgersen |           40.3|          18.0|               195|        3250|female | 2007|
-|Adelie  |Torgersen |             NA|            NA|                NA|          NA|NA     | 2007|
-|Adelie  |Torgersen |           36.7|          19.3|               193|        3450|female | 2007|
-|Adelie  |Torgersen |           39.3|          20.6|               190|        3650|male   | 2007|
-|Adelie  |Torgersen |           38.9|          17.8|               181|        3625|female | 2007|
-|Adelie  |Torgersen |           39.2|          19.6|               195|        4675|male   | 2007|
-|Adelie  |Torgersen |           34.1|          18.1|               193|        3475|NA     | 2007|
-|Adelie  |Torgersen |           42.0|          20.2|               190|        4250|NA     | 2007|
+|species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
+|:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
+|Chinstrap |Dream     |           51.3|          18.2|               197|        3750|male   | 2007|
+|Gentoo    |Biscoe    |           50.0|          16.3|               230|        5700|male   | 2007|
+|Adelie    |Biscoe    |           39.0|          17.5|               186|        3550|female | 2008|
+|Gentoo    |Biscoe    |           46.4|          15.6|               221|        5000|male   | 2008|
+|Gentoo    |Biscoe    |           47.2|          13.7|               214|        4925|female | 2009|
+|Adelie    |Dream     |           40.8|          18.4|               195|        3900|male   | 2007|
+|Gentoo    |Biscoe    |           43.5|          15.2|               213|        4650|female | 2009|
+|Adelie    |Dream     |           39.2|          18.6|               190|        4250|male   | 2009|
+|Adelie    |Torgersen |           34.4|          18.4|               184|        3325|female | 2007|
+|Gentoo    |Biscoe    |           44.0|          13.6|               208|        4350|female | 2008|
 
 ### Visualize body mass of species
 
@@ -61,6 +61,8 @@ ggplot(penguins_df, aes(x=body_mass_g, fill=species)) + geom_density(alpha=0.8) 
 {% endhighlight %}
 
 ![plot of chunk density-plot-body-mass](/assets/images/regression_hypothesis_testing/density-plot-body-mass-1.png)
+
+We can see that Adelie and Chinstrap have a similar body mass while Gentoo is heavier. If you are unsure about the differences or feel like your eyes are deciving you, performing a statistical test looking at confidence intervals can help quantify the difference and the uncertainty around that difference.
 
 ### Summary Statistics
 
@@ -94,10 +96,9 @@ aggregate(body_mass_g ~ species, penguins_df, length)
 ## 3    Gentoo         119
 {% endhighlight %}
 
-
 ### Adelie vs Chinstrap
 
-Let's test the difference between body mass of Adelie and Chinstrap using regression and compare the result to a t-test. First let's look at the difference in means between groups:
+Let's test the difference between body mass of Adelie and Chinstrap using regression and compare the result to a t-test. This will tell us if the observed difference is statistically significant or not. First let's look at the difference in means between groups:
 
 
 {% highlight r %}
@@ -152,7 +153,7 @@ summary(two_lvl_model)
 
 ### Dummy Coding / One-Hot Encoding
 
-To understand how regression on groups works, it's good to understand dummy coding. Let's manually do the dummy coding and compare results. If you think about a linear model $y=mx+b$ where $x$ is species and $y$ is body mass, we need $x$ to be $0$ for one category and $1$ for the other. In this case let's make $Chinstrap$ $1$ and $Adelie$ $0$.
+To better understand how regression on groups works, it's helpful to understand dummy coding. Let's manually do the dummy coding and compare results. If you think about a linear model $y=mx+b$ where $x$ is $Species$ and $y$ is $BodyMass$, we need $x$ to be $0$ for one category and $1$ for the other. To match the output from the previous linear model, let's make $Adelie$ $0$ and $Chinstrap$ $1$.
 
 
 {% highlight r %}
@@ -198,22 +199,19 @@ Based on the output above, the regression equation can be written as:
 
 $$ y = 26.92x + 3706.164 $$
 
-Do these numbers look familar? The slope $26.92$ is actually the group difference. The 
-intercept $3706.16$ is the mean of Adelie group. Why is this the case?
+Do these numbers look familar? The slope $26.92$ is actually the difference between means of the groups. The intercept $3706.16$ is the mean of Adelie group. Why is this the case?
 
-Let's go back to the equation for this linear model, keeping in mind the dummy coding of our $Species$ variable. Adelie is represented by $x = 0$ and Chinstrap is $x = 1$.
-
-If we sub in $x=0$, we will get $y=3706.164$ which is the mean of Adelie body mass:
+Let's sub in the dummy coding of our $Species$ variable. If we sub in $x=0$ for $Adelie$, we will get $y=3706.164$ which is the mean of Adelie body mass:
 
 $$ y = 26.92(0) + 3706.164 = 3706.164 $$
 
-When $x = 1$, $y=3733.088$ which is the mean of Chinstrap body mass:
+When $x = 1$ for $Chinstrap$, $y=3733.088$ which is the mean of Chinstrap body mass:
 
 $$ y = 26.92(1) + 3706.164 = 3733.088 $$
 
-But why is the slope the mean difference? Why is it that the line passes through the mean of both groups?
+But _why_ is the slope the mean difference? How come the regression parameters were estimated this way? It may be helpful to visualize the regression.
 
-Let's plot the situation:
+### Plot regression with 2 species
 
 
 {% highlight r %}
@@ -223,13 +221,13 @@ lines(test_df$x, predict(two_lvl_model),col='blue')
 
 ![plot of chunk boxplot-regression-line](/assets/images/regression_hypothesis_testing/boxplot-regression-line-1.png)
 
-The way the slope and intercept are calculated is called Oridnary Least Squares. It finds values of the slope and intercept that minimizes the sum of squared deviations. For every $x$ variable our model predicts a value $\hat{y_i}$. Our $x$ variable is categorical with 2 levels: $Adelie(0)$ or $Chinstrap(1)$.
+The way the slope and intercept are calculated is called Oridnary Least Squares (OLS). It finds values of the slope and intercept that minimizes the sum of squared deviations. For every $x_i$ variable our model predicts a value $\hat{y_i}$, and least squares tries to estimate the parameters (slope & intercept) that minimize the difference between the actual data point $y_i$ and the predicted value from the best fit line $\hat{y_i}$:
 
 $$\sum_{i=1}^{n} (y_i - \hat{y_i})^{2}$$
 
-The least squares formula works by minimizing the sum of squared deviations. In this case the mean of both groups is what minimizes the sum of squared errors.
+Our $x$ variable only has 2 values: $0(Adelie)$ or $1(Chinstrap)$. The OLS formula finds the slope and intercept that minimizes the sum of squared deviations. In this case the mean of both groups is minimial distance to all other points.
 
-Let's take a simple example with 3 data points in one dimension. Let's say each data point is $y$. What value of $\hat{y}$ would minimize the sum of squared errors?
+To try and explain the intuition behind why this is the case, let's take a simple example with 3 data points in one dimension: $0$, $0.8$, $1$. In the above equation, each point would be a $y$. What value of $\hat{y}$ would minimize this equation?
 
 ![Residuals in one dimension](/assets/images/regression_hypothesis_testing/sse_1d.png)
 
@@ -237,22 +235,21 @@ The mean of $0.6$ is the point that minimizes sum of squared deviations:
 
 $$ (0-0.6)^2+(0.8-0.6)^2+(1-0.6)^2 = 0.56 $$
 
-You can try with any other point, but you will find that using the mean as $\hat{y}$ minimizes the above equation. You may also notice that the median minimizes the sum of absolute deviations, but the mean minimizes squared deviations.
+You can try with any other value, but you will find that using the mean as $\hat{y}$ minimizes the above equation. So, the line of best fit passes through both group means because the group means minimize the squared errors.
 
-So, the line of best fit passes through both group means because the group means minimize the squared errors.
+In two dimensions, OLS can be used to find the equation of a line that minimizes distance to every other point. But when the $x$ variable only has two values of $0$ and $1$ we can find the equation of the line easily, as we know it will pass through the means of both groups. You only need two points to find the equation of a line. The slope of the line will be the mean difference and the intercept will be the mean of the group coded as $0$.
 
 ### Interpreting t-value & p-value of the slope
 
 What does the t-value represent here? Why does regression have a t-value at all?
-Where is null t distribution and the area under the curve?
 
-It is essentially a one sample t-test. The t-value and p-value are from a one sample t-test on the regression coefficient. And as we saw above, in this case the slope **__is__** the mean difference. So we are in a sense testing if the difference in means is different from $0$. If we compare the p-value of the slope here to a t-test or permutation test, we should see similar results. In fact, it should be identical to the t-test that uses pooled variance.
+The t-value and p-value are from a one sample t-test on the regression coefficient. This can be confusing since we don't have a sample of slopes, we only have one value for slope. But we can estimate the distribution of such a sample using the central limit theorem.
 
-The statistical test which is conducted for the statistical significance of the coefficient is a one sample t-test. This is confusing since we do not have a "sample" of multiple coefficients for X4, but we have an estimate of the distributional properties of such a sample using the central limit theorem. The mean and standard error describe the location and shape of such a limiting distribution. If you take the column "Est" and divide by "SE" that gives you the t-value. If you use the t-value and look it up on a t-distribution with the given degrees of freedom, this gives you the p-values.
-
-We can also compare this result to what we would get from a t-test:
+In this case the slope **_is_** the mean difference. So we are in a sense testing if the difference in means is different from $0$. If we compare the p-value of the slope here to a t-test or permutation test, we should see similar results.
 
 ## Regression vs t-test
+
+In fact, t-value and p-value of the slope coefficient should be identical to the t-test that uses pooled variance:
 
 
 {% highlight r %}
@@ -288,7 +285,7 @@ $$ s_p^2 = \frac{\sum_{i=1}^{n_1}(x_i - \bar{x_1}) + \sum_{j=1}^{n_2}(x_j - \bar
 
 Which can also be written as (see [here](https://stackoverflow.com/a/21385702)):
 
-$$ s_p^2 = \frac{(n_1 - 1)s_1^2 + n_2 - 1 (s_2^2)}{n_1 + n_2 - 2} $$
+$$ s_p^2 = \frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{n_1 + n_2 - 2} $$
 
 Let's calculate the t-value manually:
 
@@ -307,40 +304,66 @@ var_pool = ( (n1-1)*var1 + (n2-1) * var2) / (n1+n2-2)
 
 # Pooled standard error:
 se_pool = sqrt( var_pool * (1/n1 + 1/n2) )
+
+# Difference between group means:
+mean_diff = diff(by(test_df$body_mass_g, test_df$species, mean))
+
+# t-value: 
+t_val = mean_diff/se_pool
+
+# p-value from t-distribution (Negative our t-value to match output from t.test):
+p_val = 2*pt(-t_val,213)
+{% endhighlight %}
+
+
+{% highlight text %}
+## se_pool = 64.087288
+## mean_diff = 26.923852
+## t_val = 0.420112
+## p_val = 0.674827
 {% endhighlight %}
 
 ### Regression t-value
 
-Variance of the slope (sigma is variance of the error term):
+Standard error of the slope:
 
-$$ \frac{\sigma^{2}}{\sum(X_i - \bar{X})^{2}} $$
+$$ \frac{\sigma}{\sqrt{\sum(X_i - \bar{X})^{2}}} $$
 
-Here is a [video](https://www.youtube.com/watch?v=rODUBTRUV0U&ab_channel=jbstatistics) showing the derivation for variance:
+Where $\sigma$ is the standard deviation of the slope:
 
-And a [stack post](https://stats.stackexchange.com/questions/85943/how-to-derive-the-standard-error-of-linear-regression-coefficient) explaining standard error: 
+$$ \sqrt{\frac{\sum{(y_i-\hat{y_i})^2}}{n-2}} $$
 
+Here is a [video](https://www.youtube.com/watch?v=rODUBTRUV0U&ab_channel=jbstatistics) showing the derivation for variance. And a [stack post](https://stats.stackexchange.com/questions/85943/how-to-derive-the-standard-error-of-linear-regression-coefficient) explaining standard error.
 
-You can kind of think of SE of slope in a similar manner to to SE of any data. The SE of data is when you repeatedly sample the data and get the mean. This distribution is called the sampling distribution of the mean and the SD of this distribution is the SE. Central limit theorm tells us the SE is $\frac{\sigma}{\sqrt{n}}$.
+You can kind of think of SE of slope in a similar manner to to SE of the mean. The SE of the mean is when you repeatedly sample the data and get the mean. If you plot all those samples means, the distribution is called the sampling distribution of the mean and the SD of this distribution is the SE. Central limit theorm tells us the SE is $\frac{\sigma}{\sqrt{n}}$.
 
 Similarly for slope, imagine if you repeatedly sampled your data and calculated the slope of the best fit line. If the residuals are small, we might except slope to have a narrower range of values. If the residuals are large we are less sure of the true value of the slope, and thus might have a larger range of values.
 
+Let's calcuate the values manually:
+
 
 {% highlight r %}
-# SE of the slope is the same as SE pooled
-sqrt(sum((two_lvl_model$residuals - mean(two_lvl_model$residuals))^2) / (length( two_lvl_model$residuals) - 2)) / sqrt(sum( (test_df$x - mean(test_df$x) )^2 ))
-{% endhighlight %}
+# Value of slope:
+slope = two_lvl_model$coefficients[2]
 
+# SE of the slope:
+slope_se = sqrt(sum((two_lvl_model$residuals - mean(two_lvl_model$residuals))^2) / 
+       (length( two_lvl_model$residuals) - 2)) / 
+  sqrt(sum( (test_df$x - mean(test_df$x) )^2 ))
+{% endhighlight %}
 
 
 {% highlight text %}
-## [1] 64.09
+## slope = 26.923852
+## slope_se = 64.087288
 {% endhighlight %}
 
-The regression t-value is calculated using estimates of the mean difference and standard error obtained mathematically.
 
-We see how the standard error of both are the same. We also know the numerator is the same. In the t-test it is the mean difference, and in regression it is the slope, which is equal to the mean difference in this case.
+We see how the standard error of both regression slope and pooled standard error from the t-test are same. We also know the slope is equal to the mean difference. Hopefully this explains how we get same t-values and p-values for regression and t-tests.
 
-## Regression with a factor with 3 levels
+## Regression with 3 categories
+
+Now let's do a regression with all three species:
 
 
 {% highlight r %}
@@ -372,23 +395,8 @@ summary(three_lvl_model)
 ## F-statistic:  342 on 2 and 330 DF,  p-value: <2e-16
 {% endhighlight %}
 
-### The equivalant is one way anova and tukey HSD t-tests
+### Tukey HSD t-tests
 
-
-{% highlight r %}
-three_lvl_aov = aov(body_mass_g ~ species, data = penguins_df)
-summary(three_lvl_aov)
-{% endhighlight %}
-
-
-
-{% highlight text %}
-##              Df   Sum Sq  Mean Sq F value Pr(>F)    
-## species       2 1.45e+08 72595110     342 <2e-16 ***
-## Residuals   330 7.01e+07   212332                   
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-{% endhighlight %}
 TukeyHSD gives us an additional piece of information: the Gentoo-Chinstrap relationship which is not present in our regression above.
 
 
@@ -399,21 +407,12 @@ TukeyHSD(three_lvl_aov)
 
 
 {% highlight text %}
-##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = body_mass_g ~ species, data = penguins_df)
-## 
-## $species
-##                     diff    lwr    upr  p adj
-## Chinstrap-Adelie   26.92 -132.4  186.2 0.9164
-## Gentoo-Adelie    1386.27 1252.3 1520.3 0.0000
-## Gentoo-Chinstrap 1359.35 1194.4 1524.3 0.0000
+## Error in TukeyHSD(three_lvl_aov): object 'three_lvl_aov' not found
 {% endhighlight %}
 
-Now let's visualize this:
+Now let's visualize this.
 
-### Plot data
+### Plot regression with 3 species
 
 {% highlight r %}
 plot.default(x=penguins_df$species,y=penguins_df$body_mass_g)
@@ -424,7 +423,7 @@ lines(penguins_df$species, predict(three_lvl_model),col='blue')
 
 Well this is pretty wild, are we still looking at linear regression? The lines are disjoint and broken. What could be going on here? However, note that it does manage to pass through the means of all three groups (based on regression coefficients) which means it does minimize the least squares.
 
-Let's go back to the regression equation. In the regression output above we had an intercept and 2 slopes, meaning there was 2 $x$ variables. This is because inorder to represent 3 levels of a categorical variable, we need 2 dummy variables. So the one hot encoding R is doing will be something like this:
+Let's go back to the regression equation. In the regression output above we had an intercept and 2 slopes, meaning there was 2 $x$ variables. Inorder to represent 3 levels of a categorical variable, we need 2 dummy variables. So the dummy coding R is doing will be something like this:
 
 $$ y = m_1x_1 + m_2x_2 + b $$
 
@@ -438,32 +437,27 @@ We can manually create this coding and verify we get the exact same result:
 penguins_df$x1 = ifelse(penguins_df$species == 'Chinstrap',1,0)
 penguins_df$x2 = ifelse(penguins_df$species == 'Gentoo',1,0)
 
-penguins_df
+kable(penguins_df[sample(nrow(penguins),10),])
 {% endhighlight %}
 
 
 
-{% highlight text %}
-## # A tibble: 333 x 10
-##    species island bill_length_mm bill_depth_mm flipper_length_~ body_mass_g
-##    <fct>   <fct>           <dbl>         <dbl>            <int>       <int>
-##  1 Adelie  Torge~           39.1          18.7              181        3750
-##  2 Adelie  Torge~           39.5          17.4              186        3800
-##  3 Adelie  Torge~           40.3          18                195        3250
-##  4 Adelie  Torge~           36.7          19.3              193        3450
-##  5 Adelie  Torge~           39.3          20.6              190        3650
-##  6 Adelie  Torge~           38.9          17.8              181        3625
-##  7 Adelie  Torge~           39.2          19.6              195        4675
-##  8 Adelie  Torge~           41.1          17.6              182        3200
-##  9 Adelie  Torge~           38.6          21.2              191        3800
-## 10 Adelie  Torge~           34.6          21.1              198        4400
-## # ... with 323 more rows, and 4 more variables: sex <fct>, year <int>,
-## #   x1 <dbl>, x2 <dbl>
-{% endhighlight %}
+|species   |island | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year| x1| x2|
+|:---------|:------|--------------:|-------------:|-----------------:|-----------:|:------|----:|--:|--:|
+|Adelie    |Dream  |           36.9|          18.6|               189|        3500|female | 2008|  0|  0|
+|Chinstrap |Dream  |           50.2|          18.7|               198|        3775|female | 2009|  1|  0|
+|Gentoo    |Biscoe |           45.2|          14.8|               212|        5200|female | 2009|  0|  1|
+|Gentoo    |Biscoe |           51.1|          16.5|               225|        5250|male   | 2009|  0|  1|
+|Adelie    |Biscoe |           42.0|          19.5|               200|        4050|male   | 2008|  0|  0|
+|Chinstrap |Dream  |           46.9|          16.6|               192|        2700|female | 2008|  1|  0|
+|Chinstrap |Dream  |           49.2|          18.2|               195|        4400|male   | 2007|  1|  0|
+|Adelie    |Dream  |           40.2|          17.1|               193|        3400|female | 2009|  0|  0|
+|Chinstrap |Dream  |           51.5|          18.7|               187|        3250|male   | 2009|  1|  0|
+|Adelie    |Biscoe |           37.6|          19.1|               194|        3750|male   | 2008|  0|  0|
 
 
 {% highlight r %}
-# Double check that this is the same as the model we did before with UDF_text_07
+# Double check that this is the same as the model we did before
 three_lvl_dummy = lm(body_mass_g ~ x1+x2, data = penguins_df)
 summary(three_lvl_dummy)
 {% endhighlight %}
@@ -495,6 +489,8 @@ summary(three_lvl_dummy)
 
 We get the exact same result as above.
 
+### Plot regression in 3D
+
 We can visualize the 3D regression to get an idea of where the broken lines come from:
 
 {% highlight r %}
@@ -509,10 +505,8 @@ If you try to mentally squish this into a 2D graph like we saw before, you can k
 
 ## References:
 
-[https://stats.stackexchange.com/questions/92065/why-is-polynomial-regression-considered-a-special-case-of-multiple-linear-regres]
+<https://stats.stackexchange.com/questions/92065/why-is-polynomial-regression-considered-a-special-case-of-multiple-linear-regres>
 
-
-How come we can use linear regression for hypothesis testing:
 <https://stats.stackexchange.com/questions/128723/understanding-of-p-value-in-multiple-linear-regression>
 
 <https://stats.stackexchange.com/questions/117406/proof-that-the-coefficients-in-an-ols-model-follow-a-t-distribution-with-n-k-d>
