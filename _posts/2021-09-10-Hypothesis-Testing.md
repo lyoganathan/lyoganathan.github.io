@@ -2,7 +2,7 @@
 layout: single
 title: "Hypothesis Testing With Regression"
 excerpt: "Comparing regression and t-test when you have a continous Y and a categorical X"
-date: "2021-09-03"
+date: "2021-09-10"
 tags: [regression, categorical, hypothesis, testing, multiple, categories]
 values:
   show_date: true
@@ -34,18 +34,18 @@ kable(penguins[sample(nrow(penguins),10),])
 
 
 
-|species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
-|:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
-|Chinstrap |Dream     |           49.8|          17.3|               198|        3675|female | 2009|
-|Gentoo    |Biscoe    |           43.2|          14.5|               208|        4450|female | 2008|
-|Adelie    |Dream     |           37.5|          18.9|               179|        2975|NA     | 2007|
-|Adelie    |Torgersen |           41.5|          18.3|               195|        4300|male   | 2009|
-|Chinstrap |Dream     |           50.1|          17.9|               190|        3400|female | 2009|
-|Adelie    |Dream     |           36.0|          18.5|               186|        3100|female | 2007|
-|Chinstrap |Dream     |           51.0|          18.8|               203|        4100|male   | 2008|
-|Adelie    |Torgersen |           42.8|          18.5|               195|        4250|male   | 2008|
-|Gentoo    |Biscoe    |           46.7|          15.3|               219|        5200|male   | 2007|
-|Gentoo    |Biscoe    |           42.6|          13.7|               213|        4950|female | 2008|
+|species   |island | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
+|:---------|:------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
+|Adelie    |Biscoe |           39.7|          18.9|               184|        3550|male   | 2009|
+|Chinstrap |Dream  |           45.2|          16.6|               191|        3250|female | 2009|
+|Adelie    |Dream  |           40.3|          18.5|               196|        4350|male   | 2008|
+|Gentoo    |Biscoe |           48.4|          14.6|               213|        5850|male   | 2007|
+|Chinstrap |Dream  |           52.0|          19.0|               197|        4150|male   | 2007|
+|Adelie    |Biscoe |           37.9|          18.6|               172|        3150|female | 2007|
+|Adelie    |Biscoe |           37.8|          20.0|               190|        4250|male   | 2009|
+|Chinstrap |Dream  |           52.8|          20.0|               205|        4550|male   | 2008|
+|Adelie    |Biscoe |           38.8|          17.2|               180|        3800|male   | 2007|
+|Adelie    |Dream  |           35.7|          18.0|               202|        3550|female | 2008|
 
 ### Visualize body mass of species
 
@@ -327,13 +327,13 @@ p_val = 2*pt(-t_val,213)
 
 Standard error of the slope:
 
-$$ \frac{\sigma}{\sqrt{\sum(X_i - \bar{X})^{2}}} $$
+$$ \frac{\sqrt{s^2}}{\sqrt{\sum(X_i - \bar{X})^{2}}} $$
 
-Where $\sigma$ is the standard deviation of the slope:
+Where $\sqrt{s^2}$ is:
 
 $$ \sqrt{\frac{\sum{(y_i-\hat{y_i})^2}}{n-2}} $$
 
-Here is a [video](https://www.youtube.com/watch?v=rODUBTRUV0U&ab_channel=jbstatistics) showing the derivation for variance. And a [stack post](https://stats.stackexchange.com/questions/85943/how-to-derive-the-standard-error-of-linear-regression-coefficient) explaining standard error.
+Here is a [video](https://www.youtube.com/watch?v=rODUBTRUV0U&ab_channel=jbstatistics) showing the derivation for variance of the slope estimator. And a [stack post](https://stats.stackexchange.com/questions/85943/how-to-derive-the-standard-error-of-linear-regression-coefficient) explaining standard error.
 
 You can kind of think of SE of slope in a similar manner to to SE of the mean. The SE of the mean is when you repeatedly sample the data and get the mean. If you plot all those samples means, the distribution is called the sampling distribution of the mean and the SD of this distribution is the SE. Central limit theorm tells us the SE is $\frac{\sigma}{\sqrt{n}}$.
 
@@ -454,16 +454,16 @@ kable(penguins_df[sample(nrow(penguins),10),])
 
 |species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year| x1| x2|
 |:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|--:|--:|
-|Adelie    |Torgersen |           41.1|          17.6|               182|        3200|female | 2007|  0|  0|
-|Chinstrap |Dream     |           46.5|          17.9|               192|        3500|female | 2007|  1|  0|
-|Gentoo    |Biscoe    |           48.7|          15.7|               208|        5350|male   | 2008|  0|  1|
-|Adelie    |Biscoe    |           34.5|          18.1|               187|        2900|female | 2008|  0|  0|
-|Gentoo    |Biscoe    |           45.8|          14.6|               210|        4200|female | 2007|  0|  1|
-|Chinstrap |Dream     |           48.5|          17.5|               191|        3400|male   | 2007|  1|  0|
-|Adelie    |Dream     |           36.5|          18.0|               182|        3150|female | 2007|  0|  0|
-|Adelie    |Torgersen |           41.4|          18.5|               202|        3875|male   | 2009|  0|  0|
-|Adelie    |Biscoe    |           37.9|          18.6|               193|        2925|female | 2009|  0|  0|
-|Adelie    |Torgersen |           34.6|          17.2|               189|        3200|female | 2008|  0|  0|
+|Gentoo    |Biscoe    |           47.8|          15.0|               215|        5650|male   | 2007|  0|  1|
+|Adelie    |Torgersen |           39.1|          18.7|               181|        3750|male   | 2007|  0|  0|
+|Gentoo    |Biscoe    |           43.3|          14.0|               208|        4575|female | 2009|  0|  1|
+|Adelie    |Dream     |           36.3|          19.5|               190|        3800|male   | 2008|  0|  0|
+|Gentoo    |Biscoe    |           47.2|          15.5|               215|        4975|female | 2009|  0|  1|
+|Chinstrap |Dream     |           51.9|          19.5|               206|        3950|male   | 2009|  1|  0|
+|Gentoo    |Biscoe    |           48.2|          14.3|               210|        4600|female | 2007|  0|  1|
+|Chinstrap |Dream     |           40.9|          16.6|               187|        3200|female | 2008|  1|  0|
+|Gentoo    |Biscoe    |           40.9|          13.7|               214|        4650|female | 2007|  0|  1|
+|Adelie    |Dream     |           36.2|          17.3|               187|        3300|female | 2008|  0|  0|
 
 
 {% highlight r %}

@@ -2,7 +2,7 @@
 layout: single
 title: "Hypothesis Testing With Regression"
 excerpt: "Comparing regression and t-test when you have a continous Y and a categorical X"
-date: "2021-09-03"
+date: "2021-09-10"
 tags: [regression, categorical, hypothesis, testing, multiple, categories]
 values:
   show_date: true
@@ -216,13 +216,13 @@ p_val = %f", se_pool,mean_diff,t_val,p_val))
 
 Standard error of the slope:
 
-$$ \frac{\sigma}{\sqrt{\sum(X_i - \bar{X})^{2}}} $$
+$$ \frac{\sqrt{s^2}}{\sqrt{\sum(X_i - \bar{X})^{2}}} $$
 
-Where $\sigma$ is the standard deviation of the slope:
+Where $\sqrt{s^2}$ is:
 
 $$ \sqrt{\frac{\sum{(y_i-\hat{y_i})^2}}{n-2}} $$
 
-Here is a [video](https://www.youtube.com/watch?v=rODUBTRUV0U&ab_channel=jbstatistics) showing the derivation for variance. And a [stack post](https://stats.stackexchange.com/questions/85943/how-to-derive-the-standard-error-of-linear-regression-coefficient) explaining standard error.
+Here is a [video](https://www.youtube.com/watch?v=rODUBTRUV0U&ab_channel=jbstatistics) showing the derivation for variance of the slope estimator. And a [stack post](https://stats.stackexchange.com/questions/85943/how-to-derive-the-standard-error-of-linear-regression-coefficient) explaining standard error.
 
 You can kind of think of SE of slope in a similar manner to to SE of the mean. The SE of the mean is when you repeatedly sample the data and get the mean. If you plot all those samples means, the distribution is called the sampling distribution of the mean and the SD of this distribution is the SE. Central limit theorm tells us the SE is $\frac{\sigma}{\sqrt{n}}$.
 
