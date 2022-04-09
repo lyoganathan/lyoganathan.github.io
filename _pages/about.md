@@ -6,7 +6,9 @@ permalink: /about/
 
 ## Work:
 
-Currently I'm a data analyst at SiriusXM. Im on the CRM team and I work on campaigns, experimentaiton, data visualization, dashboarding/reporting and automating data workflows. I also use statistics and machine learning to build, train, and deploy models to target customers.
+Currently I'm a data engineer at Opendoor (Feb 2022 - ). I work on ETL pipelines for real estate data.
+
+Before that I was a data analyst at SiriusXM on the CRM team (March 2020 - Feb 2022). I worked on campaigns, experimentaiton, data visualization, dashboarding/reporting and automating data workflows. I also used statistics and machine learning to build, train, and deploy models to target customers.
 
 ## Academic Background:
 
