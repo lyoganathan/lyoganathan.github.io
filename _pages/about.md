@@ -6,9 +6,9 @@ permalink: /about/
 
 ## Work:
 
-Currently I'm a data engineer at Opendoor (Feb 2022 - ). I work on ETL pipelines for real estate data.
+Currently I'm a data engineering analyst at SickKids (Feb 2025 - ). I work on ETL pipelines for electronic health record data.
 
-Before that I was a data analyst at SiriusXM on the CRM team (March 2020 - Feb 2022). I worked on campaigns, experimentaiton, data visualization, dashboarding/reporting and automating data workflows. I also used statistics and machine learning to build, train, and deploy models to target customers.
+Before that I was a data engineer at Opendoor on the MLS team (Feb 2022 - Jan 2024) and a data analyst at SiriusXM on the CRM team (March 2020 - Feb 2022).
 
 ## Academic Background:
 
