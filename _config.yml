@@ -29,7 +29,7 @@ url: "https://lyoganathan.github.io/" # the base hostname & protocol for your si
 author:
   name: Laagi Yoganathan
   avatar: /assets/images/avatar.png
-  bio: "Currently a data engineer at Opendoor. Previously doing MRI research at McMaster University."
+  bio: "Currently a data engineering analyst at SickKids. Previously doing MRI research at McMaster University."
   location: "Toronto, Canada"
   links:
     - label: "Github"
